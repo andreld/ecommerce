@@ -1,25 +1,20 @@
 package com.andre.ecommerce.domain.model;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
-public class ItemVenda {
+public class Transportadora {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	private EstoqueProduto estoqueProduto;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Venda venda;
-
-	private int quantidade;
+	@Embedded
+	private DadosGerais dadosGerais;
 
 	public Long getId() {
 		return id;
@@ -29,28 +24,12 @@ public class ItemVenda {
 		this.id = id;
 	}
 
-	public EstoqueProduto getEstoqueProduto() {
-		return estoqueProduto;
+	public DadosGerais getDadosGerais() {
+		return dadosGerais;
 	}
 
-	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
-		this.estoqueProduto = estoqueProduto;
-	}
-
-	public Venda getVenda() {
-		return venda;
-	}
-
-	public void setVenda(Venda venda) {
-		this.venda = venda;
-	}
-
-	public int getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(int quantidade) {
-		this.quantidade = quantidade;
+	public void setDadosGerais(DadosGerais dadosGerais) {
+		this.dadosGerais = dadosGerais;
 	}
 
 	@Override
@@ -69,7 +48,7 @@ public class ItemVenda {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ItemVenda other = (ItemVenda) obj;
+		Transportadora other = (Transportadora) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

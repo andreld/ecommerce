@@ -1,33 +1,26 @@
 package com.andre.ecommerce.domain.model;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Pessoa {
+public class Cliente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Embedded
+	private DadosGerais dadosGerais;
 
-	private String nome;
-
-	private String cpfCnpj;
-
-	private TipoPessoa tipoPessoa;
-
-	private TipoUsuario tipoUsuario;
-
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "endereco_id")
 	private Endereco endereco;
-
-	// TODO implementar contato
-//	public static class Contato {
-//		private String telefone;
-//		private String email;
-//	}
 
 	public Long getId() {
 		return id;
@@ -36,37 +29,13 @@ public class Pessoa {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public String getNome() {
-		return nome;
+	
+	public DadosGerais getDadosGerais() {
+		return dadosGerais;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getCpfCnpj() {
-		return cpfCnpj;
-	}
-
-	public void setCpfCnpj(String cpfCnpj) {
-		this.cpfCnpj = cpfCnpj;
-	}
-
-	public TipoPessoa getTipoPessoa() {
-		return tipoPessoa;
-	}
-
-	public void setTipoPessoa(TipoPessoa tipoPessoa) {
-		this.tipoPessoa = tipoPessoa;
-	}
-
-	public TipoUsuario getTipoUsuario() {
-		return tipoUsuario;
-	}
-
-	public void setTipoUsuario(TipoUsuario tipoUsuario) {
-		this.tipoUsuario = tipoUsuario;
+	public void setDadosGerais(DadosGerais dadosGerais) {
+		this.dadosGerais = dadosGerais;
 	}
 
 	public Endereco getEndereco() {
@@ -93,7 +62,7 @@ public class Pessoa {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pessoa other = (Pessoa) obj;
+		Cliente other = (Cliente) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

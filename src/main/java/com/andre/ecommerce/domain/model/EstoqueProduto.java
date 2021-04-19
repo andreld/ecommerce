@@ -1,25 +1,32 @@
 package com.andre.ecommerce.domain.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
-public class Produto {
+public class EstoqueProduto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "codigobarras")
 	private String codigoBarras;
 
 	private String descricao;
 
 	private BigDecimal valor;
+
+	private Integer quantidade;
+	
+	@OneToMany(mappedBy = "estoqueProduto", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ItemVenda> itensCarrinho = new ArrayList<ItemVenda>(); 
 
 	public Long getId() {
 		return id;
@@ -51,6 +58,18 @@ public class Produto {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+	}
+
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
+	}
+
+	public List<ItemVenda> getItensCarrinho() {
+		return itensCarrinho;
 	}
 
 }

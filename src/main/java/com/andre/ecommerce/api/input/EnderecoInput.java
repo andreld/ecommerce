@@ -12,18 +12,15 @@ public class EnderecoInput {
 	@NotBlank
 	private String cep;
 	
-	private int numero;
-	
 	@NotNull
-	private boolean semNumero;
-	
+	private int numero;
+
 	@NotBlank
 	private String rua;
 	
 	@NotBlank
 	private String bairro;
 	
-	@NotBlank
 	private String complemento;
 	
 	@NotBlank

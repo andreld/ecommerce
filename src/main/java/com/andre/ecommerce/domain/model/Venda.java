@@ -1,7 +1,10 @@
 package com.andre.ecommerce.domain.model;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,37 +18,46 @@ import javax.persistence.OneToMany;
 @Entity
 public class Venda {
 
+	private static final short PARCELA_UNICA = 1;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Pagamento formaPagamento;
+	private FormaPagamento formaPagamento;
+
+	private Short numeroParcelas;
 
 	@ManyToOne
 	@JoinColumn(name = "transportadora_id")
-	private Pessoa transportadora;
+	private Transportadora transportadora;
 
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
-	private Pessoa cliente;
+	private Cliente cliente;
 
 	@ManyToOne
 	@JoinColumn(name = "loja_id")
-	private Pessoa loja;
+	private Loja loja;
 
-	@OneToMany(mappedBy = "venda")
-	private List<ItemVenda> itensCarrinho;
+	@OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ItemVenda> itensCarrinho = new ArrayList<ItemVenda>();
 
-	@Enumerated(EnumType.STRING)
+	private BigDecimal valorFrete;
+
+	private BigDecimal valorTotalItens;
+	
+	@Enumerated(EnumType.ORDINAL)
 	private StatusVenda status;
 
 	public Venda() {
 
 	}
 
-	public Venda(Pessoa cliente) {
+	public Venda(Cliente cliente, Loja loja) {
 		this.cliente = cliente;
-		this.status = StatusVenda.EM_ANDAMENTO;
+		this.loja = loja;
+		this.status = StatusVenda.FINALIZADA;
 	}
 
 	public Long getId() {
@@ -56,48 +68,91 @@ public class Venda {
 		this.id = id;
 	}
 
-	public Pagamento getFormaPagamento() {
+	public FormaPagamento getFormaPagamento() {
 		return formaPagamento;
 	}
 
-	public void setFormaPagamento(Pagamento formaPagamento) {
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
 
-	public Pessoa getTransportadora() {
+	public Short getNumeroParcelas() {
+		return numeroParcelas;
+	}
+	
+	public StatusVenda getStatus() {
+		return status;
+	}
+
+	public void pagarDebito() {
+		this.formaPagamento = FormaPagamento.DEBITO;
+		this.numeroParcelas = PARCELA_UNICA;
+	}
+
+	public void pagarBoleto() {
+		this.formaPagamento = FormaPagamento.BOLETO;
+		this.numeroParcelas = PARCELA_UNICA;
+	}
+
+	public void pagarCredito(Short numeroParcelas) {
+		this.formaPagamento = FormaPagamento.CREDITO;
+		this.numeroParcelas = numeroParcelas;
+	}
+
+	public void setNumeroParcelas(Short numeroParcelas) {
+		this.numeroParcelas = numeroParcelas;
+	}
+
+	public Transportadora getTransportadora() {
 		return transportadora;
 	}
 
-	public void setTransportadora(Pessoa transportadora) {
+	public void setTransportadora(Transportadora transportadora) {
 		this.transportadora = transportadora;
 	}
 
-	public Pessoa getCliente() {
+	public Cliente getCliente() {
 		return cliente;
 	}
 
-	public void setCliente(Pessoa cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
 
-	public Pessoa getLoja() {
+	public Loja getLoja() {
 		return loja;
+	}
+
+	public void setLoja(Loja loja) {
+		this.loja = loja;
 	}
 
 	public List<ItemVenda> getItensCarrinho() {
 		return itensCarrinho;
 	}
 
-	public void setItensCarrinho(List<ItemVenda> itensCarrinho) {
-		this.itensCarrinho = itensCarrinho;
+	public BigDecimal getValorFrete() {
+		return valorFrete;
 	}
 
-	public StatusVenda getStatus() {
-		return status;
+	public void setValorFrete(BigDecimal valorFrete) {
+		this.valorFrete = valorFrete;
 	}
 
-	public void setStatus(StatusVenda status) {
-		this.status = status;
+	public BigDecimal getValorTotalItens() {
+		return valorTotalItens;
+	}
+
+	public void setValorTotalItens(BigDecimal valorTotalItens) {
+		this.valorTotalItens = valorTotalItens;
+	}
+	
+	public void finalizarVenda() {
+		this.status = StatusVenda.FINALIZADA;
+	}
+	
+	public void cancelarVenda() {
+		this.status = StatusVenda.CANCELADA;
 	}
 
 }
