@@ -23,3 +23,5 @@ values('101010101015', 'Microondas', '45', 700.00);
 
 insert into ecommerce.estoque_produto(codigo_barras, descricao, quantidade, valor)
 values('101010101016', 'Monitor Ultrawide', '45', 1255.40);
+
+

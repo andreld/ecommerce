@@ -25,7 +25,7 @@ import com.andre.ecommerce.domain.repository.VendaRepository;
 @Service
 public class GestaoVendaService {
 
-	private static final long LOJA_ID = 2L;
+	private static final long LOJA_ID = 1L;
 
 	@Autowired
 	VendaRepository vendaRepository;

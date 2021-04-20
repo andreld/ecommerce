@@ -7,7 +7,7 @@ create table venda(
     loja_id bigint not null,
     valor_frete decimal(10,2) not null,
 	valor_total_itens decimal(10,2),
-    status int(20) not null,
+    status int not null,
    
     primary key(id)
 );
