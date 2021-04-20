@@ -5,10 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ClienteDto {
-	
-	private long id;
+public class LojaDto {
 	private DadosGeraisDto dadosGerais;
-	private EnderecoDto endereco;
-
 }
+

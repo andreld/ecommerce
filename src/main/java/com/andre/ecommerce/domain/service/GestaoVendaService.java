@@ -11,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.andre.ecommerce.api.dto.VendaDto;
 import com.andre.ecommerce.domain.exception.NegocioException;
+import com.andre.ecommerce.domain.model.Cliente;
+import com.andre.ecommerce.domain.model.EstoqueProduto;
 import com.andre.ecommerce.domain.model.ItemVenda;
+import com.andre.ecommerce.domain.model.Transportadora;
 import com.andre.ecommerce.domain.model.Venda;
 import com.andre.ecommerce.domain.repository.ClienteRepository;
 import com.andre.ecommerce.domain.repository.EstoqueProdutoRepository;
@@ -44,25 +47,39 @@ public class GestaoVendaService {
 
 	@Transactional
 	public VendaDto salvar(Venda venda, long clienteId) {
+		
+		Venda resumoVenda = resumoVenda(venda, clienteId);
+		resumoVenda.finalizarVenda();
 
-		venda.setCliente(
-				clienteRepository.findById(clienteId).orElseThrow(() -> new NegocioException("Cliente não existe")));
-		venda.setTransportadora(transportadoraRepository.findById(venda.getTransportadora().getId())
-				.orElseThrow(() -> new NegocioException("Transportadora não existe")));
-		venda.setLoja(lojaRepository.findById(LOJA_ID).orElseThrow(() -> new NegocioException("Erro interno")));
+		return toDto(vendaRepository.save(resumoVenda));
+	}
+
+	private Venda resumoVenda(Venda venda, long clienteId) {
+		
+		venda.setCliente(clienteRepository.findById(clienteId)
+				.orElseThrow(() -> new NegocioException("Cliente não existe")));
+		Transportadora transportadora = transportadoraRepository.findById(venda.getTransportadora().getId())
+				.orElseThrow(() -> new NegocioException("Transportadora não existe"));
+		venda.setValorFrete(transportadora.getValorFrete());
+		venda.setTransportadora(transportadora);
+		venda.setLoja(lojaRepository.findById(LOJA_ID)
+				.orElseThrow(() -> new NegocioException("Erro interno")));
 
 		for (ItemVenda item : venda.getItensCarrinho()) {
 			item.setVenda(venda);
-			item.setEstoqueProduto(estoqueProdutoRepository.findById(item.getEstoqueProduto().getId())
-					.orElseThrow(() -> new NegocioException("Produto não existe")));
+			EstoqueProduto estoque = estoqueProdutoRepository.findById(item.getEstoqueProduto().getId())
+					.orElseThrow(() -> new NegocioException("Produto não existe"));
+			estoque.subtrair(item.getQuantidade());
+			item.setEstoqueProduto(estoque);
 		}
-		
 		venda.setValorTotalItens(calcularValorTotalItens(venda));
-		venda.finalizarVenda();
-		venda.setValorFrete(new BigDecimal("10.00"));
-		Venda vendaRetorno = vendaRepository.save(venda);
 
-		return toDto(vendaRetorno);
+		
+		return venda;
+	}
+	
+	public VendaDto checkout(Venda venda, long clienteId) {
+		return toDto(resumoVenda(venda, clienteId));
 	}
 
 	public List<VendaDto> listar() {
@@ -79,42 +96,12 @@ public class GestaoVendaService {
 		return toDto(vendaRetorno);
 	}
 
-	public BigDecimal calcularValorTotalItens(Venda venda) {
-
-		detalhaItensCarrinho(venda);
+	private BigDecimal calcularValorTotalItens(Venda venda) {
 
 		return venda.getItensCarrinho().stream().map(
 				item -> (BigDecimal) item.getEstoqueProduto().getValor().multiply(new BigDecimal(item.getQuantidade())))
 				.reduce((atual, proximo) -> atual.add(proximo)).orElse(BigDecimal.ZERO.setScale(2));
 	}
-
-	public void detalhaItensCarrinho(Venda venda) {
-		venda.getItensCarrinho().forEach(item -> {
-			item.setEstoqueProduto(estoqueProdutoRepository.findById(item.getEstoqueProduto().getId())
-					.orElseThrow(() -> new NegocioException("Produto não existe")));
-			item.setId(null);
-		});
-	}
-
-	// public VendaDto salvar
-
-//	@Transactional
-//	public VendaDto atualizar(Long vendaId, Venda venda) {
-//		
-//		if (!vendaRepository.existsById(vendaId)) {
-//			throw new NegocioException(PRODUTO_NAO_EXISTE);
-//		}
-//		
-//		venda.setId(vendaId);
-//		Venda vendaRetorno = vendaRepository.save(venda);
-//
-//		return toDto(vendaRetorno);
-//	}
-
-//	@Transactional
-//	public void excluir(Long id) {
-//		vendaRepository.deleteById(id);
-//	}
 
 	private VendaDto toDto(Venda venda) {
 		return modelMapper.map(venda, VendaDto.class);
@@ -122,6 +109,15 @@ public class GestaoVendaService {
 
 	private List<VendaDto> toDtoList(List<Venda> listaVenda) {
 		return listaVenda.stream().map(venda -> toDto(venda)).collect(Collectors.toList());
+	}
+
+	public List<VendaDto> listar(Long clienteId) {
+		
+		Cliente cliente = clienteRepository.findById(clienteId)
+		.orElseThrow(() -> new NegocioException("Cliente não existe"));
+		
+		return toDtoList(vendaRepository.findByCliente(cliente));
+
 	}
 
 }

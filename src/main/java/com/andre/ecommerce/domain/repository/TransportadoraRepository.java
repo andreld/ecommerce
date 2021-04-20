@@ -8,4 +8,6 @@ import com.andre.ecommerce.domain.model.Transportadora;
 @Repository
 public interface TransportadoraRepository extends JpaRepository<Transportadora, Long>{
 
+	public boolean existsByDadosGeraisCpfCnpj(String cpfCnpj);
+
 }

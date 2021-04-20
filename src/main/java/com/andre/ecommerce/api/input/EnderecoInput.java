@@ -9,6 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnderecoInput {
+	
+	private long id;
+	
 	@NotBlank
 	private String cep;
 	

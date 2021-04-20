@@ -1,13 +1,10 @@
 package com.andre.ecommerce.api.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import com.andre.ecommerce.domain.model.Cliente;
 import com.andre.ecommerce.domain.model.FormaPagamento;
-import com.andre.ecommerce.domain.model.ItemVenda;
-import com.andre.ecommerce.domain.model.Loja;
 import com.andre.ecommerce.domain.model.StatusVenda;
-import com.andre.ecommerce.domain.model.Transportadora;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,18 +13,26 @@ import lombok.Setter;
 @Setter
 public class VendaDto {
 
-	private Long id;
+	private long id;
 
 	private FormaPagamento formaPagamento;
 
-	private Transportadora transportadora;
+	private TransportadoraDto transportadora;
 
-	private Cliente cliente;
+	private ClienteDto cliente;
 	
-	private Loja loja;
+	private LojaDto loja;
 
 	private List<ItemVendaDto> itensCarrinho;
 
 	private StatusVenda status;
+	
+	private BigDecimal valorTotalItens;
+	
+	private BigDecimal valorFrete;
+	
+	public BigDecimal getValorTotal() {
+		return valorTotalItens.add(valorFrete);
+	}
 	
 }

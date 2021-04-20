@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class EnderecoDto {
 	
+	private long id;
 	private String cep;
 	private int numero;
 	private String rua;

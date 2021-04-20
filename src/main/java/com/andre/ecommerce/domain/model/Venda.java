@@ -51,13 +51,7 @@ public class Venda {
 	private StatusVenda status;
 
 	public Venda() {
-
-	}
-
-	public Venda(Cliente cliente, Loja loja) {
-		this.cliente = cliente;
-		this.loja = loja;
-		this.status = StatusVenda.FINALIZADA;
+		this.status = StatusVenda.EM_ANDAMENTO;
 	}
 
 	public Long getId() {

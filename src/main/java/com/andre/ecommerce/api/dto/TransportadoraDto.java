@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EstoqueProdutoDto {
+public class TransportadoraDto {
 	
 	private long id;
-	private String codigoBarras;
-	private String descricao;
-	private BigDecimal valor;
-	private Integer quantidade;
+
+	private DadosGeraisDto dadosGerais;
+	
+	private BigDecimal valorFrete;
 	
 }

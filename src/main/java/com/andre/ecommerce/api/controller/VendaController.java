@@ -1,11 +1,12 @@
 package com.andre.ecommerce.api.controller;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,11 +38,15 @@ public class VendaController {
 	@Autowired
 	ModelMapper modelMapper;
 	
-	@PostMapping("/calculaTotalItens")
-	public BigDecimal calcularValorItens(@PathVariable Long clienteId, @Valid @RequestBody VendaInput vendaInput) { 
-		
+	@GetMapping("/historico")
+	public List<VendaDto> historico(@PathVariable Long clienteId) {
+		return gestaoVendaService.listar(clienteId);
+	}
+	
+	@PostMapping("/checkout")
+	public VendaDto checkout(@PathVariable Long clienteId, @Valid @RequestBody VendaInput vendaInput) {
 		cadastroClienteService.existePorId(clienteId);
-		return gestaoVendaService.calcularValorTotalItens(toEntity(vendaInput));
+		return gestaoVendaService.checkout(toEntity(vendaInput), clienteId);
 	}
 	
 	@PostMapping("/finalizar")

@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.andre.ecommerce.domain.exception.NegocioException;
+
 @Entity
 public class EstoqueProduto {
 	@Id
@@ -23,7 +25,7 @@ public class EstoqueProduto {
 
 	private BigDecimal valor;
 
-	private Integer quantidade;
+	private int quantidade;
 	
 	@OneToMany(mappedBy = "estoqueProduto", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemVenda> itensCarrinho = new ArrayList<ItemVenda>(); 
@@ -60,12 +62,29 @@ public class EstoqueProduto {
 		this.valor = valor;
 	}
 
-	public Integer getQuantidade() {
+	public int getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
+	public void setQuantidade(int quantidade) {
+		if (quantidade >= 0) {
+			this.quantidade = quantidade;
+		} else {
+			throw new NegocioException("Quantidade não pode ser menor que zero");
+		}
+	}
+
+	public int adicionar(int quantidadeAdicionada) {
+		this.quantidade += quantidadeAdicionada;
+		return this.quantidade;
+	}
+
+	public int subtrair(int quantidadeRemovida) {
+		if (quantidadeRemovida > this.quantidade) {
+			throw new NegocioException("A quantidade solicitada é maior que o total atual no estoque.");
+		}
+		this.quantidade -= quantidadeRemovida;
+		return this.quantidade;
 	}
 
 	public List<ItemVenda> getItensCarrinho() {

@@ -10,13 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.andre.ecommerce.api.dto.ClienteDto;
 import com.andre.ecommerce.domain.exception.NegocioException;
-import com.andre.ecommerce.domain.model.Endereco;
 import com.andre.ecommerce.domain.model.Cliente;
-import com.andre.ecommerce.domain.repository.EnderecoRepository;
 import com.andre.ecommerce.domain.repository.ClienteRepository;
+import com.andre.ecommerce.domain.repository.EnderecoRepository;
 
 @Service
 public class CadastroClienteService {
+
+	private static final String CLIENTE_NAO_EXISTE = "Cliente não existe";
 
 	@Autowired
 	ClienteRepository clienteRepository;
@@ -34,8 +35,6 @@ public class CadastroClienteService {
 			throw new NegocioException("Cliente já cadastrado");
 		}
 		
-		Endereco endereco = enderecoRepository.save(cliente.getEndereco());
-		cliente.setEndereco(endereco);
 		Cliente clienteRetorno = clienteRepository.save(cliente);
 
 		return toDto(clienteRetorno);
@@ -47,9 +46,26 @@ public class CadastroClienteService {
 		return toDtoList(listaClientes);
 	}
 	
+	@Transactional
+	public ClienteDto atualizarCliente(long clienteId, Cliente cliente) {
+		existePorId(clienteId);
+		
+		cliente.setId(clienteId);
+		clienteRepository.save(cliente);
+		
+		return toDto(cliente);
+	}
+	
+	public ClienteDto buscarCliente(long clienteId) {
+		Cliente cliente = clienteRepository.findById(clienteId)
+				.orElseThrow(() -> new NegocioException(CLIENTE_NAO_EXISTE));
+		
+		return toDto(cliente);
+	}
+	
 	public void existePorId(Long clienteId) {
 		if(!clienteRepository.existsById(clienteId)) { 
-			throw new NegocioException("Cliente não existe");
+			throw new NegocioException(CLIENTE_NAO_EXISTE);
 		};
 	}
 	

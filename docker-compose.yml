@@ -1,0 +1,20 @@
+version: '3'
+services:
+  docker-mysql:
+    container_name: mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MyNewPass
+    ports:
+      - "3307:3306"
+
+  app:
+    container_name: ecommerce
+    image: andrepires/ecommerce:latest
+    ports:
+      - 8081:8081
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://docker-mysql:3306/ecommerce?createDatabaseIfNotExist=true&serverTimezone=UTC
+    depends_on:
+      - docker-mysql

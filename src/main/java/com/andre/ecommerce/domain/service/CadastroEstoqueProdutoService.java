@@ -27,13 +27,17 @@ public class CadastroEstoqueProdutoService {
 	@Transactional
 	public EstoqueProdutoDto salvar(EstoqueProduto estoqueProduto) {
 
-		if (estoqueProdutoRepository.existsByCodigoBarras(estoqueProduto.getCodigoBarras())) {
-			throw new NegocioException("Produto já cadastrado com este código de barras");
-		}
+		existePorCodigoBarras(estoqueProduto);
 
 		EstoqueProduto estoqueProdutoRetorno = estoqueProdutoRepository.save(estoqueProduto);
 
 		return toDto(estoqueProdutoRetorno);
+	}
+
+	public void existePorCodigoBarras(EstoqueProduto estoqueProduto) {
+		if (estoqueProdutoRepository.existsByCodigoBarras(estoqueProduto.getCodigoBarras())) {
+			throw new NegocioException("Produto já cadastrado com este código de barras");
+		}
 	}
 
 	public List<EstoqueProdutoDto> listar() {
@@ -53,14 +57,18 @@ public class CadastroEstoqueProdutoService {
 	@Transactional
 	public EstoqueProdutoDto atualizar(Long estoqueProdutoId, EstoqueProduto estoqueProduto) {
 		
-		if (!estoqueProdutoRepository.existsById(estoqueProdutoId)) {
-			throw new NegocioException(PRODUTO_NAO_EXISTE);
-		}
+		existePorId(estoqueProdutoId);
 		
 		estoqueProduto.setId(estoqueProdutoId);
 		EstoqueProduto estoqueProdutoRetorno = estoqueProdutoRepository.save(estoqueProduto);
 
 		return toDto(estoqueProdutoRetorno);
+	}
+
+	public void existePorId(Long estoqueProdutoId) {
+		if (!estoqueProdutoRepository.existsById(estoqueProdutoId)) {
+			throw new NegocioException(PRODUTO_NAO_EXISTE);
+		}
 	}
 	
 	@Transactional

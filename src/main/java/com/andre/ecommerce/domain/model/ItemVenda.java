@@ -13,10 +13,10 @@ public class ItemVenda {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private EstoqueProduto estoqueProduto;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Venda venda;
 
 	private int quantidade;
@@ -28,7 +28,7 @@ public class ItemVenda {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public EstoqueProduto getEstoqueProduto() {
 		return estoqueProduto;
 	}
@@ -36,7 +36,7 @@ public class ItemVenda {
 	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
 		this.estoqueProduto = estoqueProduto;
 	}
-
+	
 	public Venda getVenda() {
 		return venda;
 	}
@@ -77,5 +77,5 @@ public class ItemVenda {
 			return false;
 		return true;
 	}
-
+	
 }
