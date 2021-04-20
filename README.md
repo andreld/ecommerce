@@ -4,7 +4,7 @@ Este projeto simula um serviço básico de e-commerce, onde um cliente seleciona
 
 # Executando
 
-A imagem da aplicão está disponível no Docker Hub, assim como o banco de dados utilizado (MySQL) e podem ser executdas utilizando o arquivo [docker-compose.yml](https://github.com/andreld/ecommerce/blob/main/docker-compose.yml) presente neste repositório.
+A imagem da aplicação está disponível no Docker Hub, assim como o banco de dados utilizado (MySQL) e podem ser baixadas e executadas utilizando o arquivo [docker-compose.yml](https://github.com/andreld/ecommerce/blob/main/docker-compose.yml) presente neste repositório e executando o comando `docker-compose up`.
 
 Para testar as funcionalidades é necessária alguma ferramenta para consumo de APIs REST como o Postman.
 
@@ -22,24 +22,26 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
     - busca: GET/cliente/:id
  
   Exemplo de corpo da requisição para POST e PUT:
-   
-   {
-    "nome": "Eurico Fernandes",
-    "cpfCnpj": "12345678900",
-    "telefone": "98987654321",
-    "tipoPessoa": 0,
-    "email": "email58@email.com",
-    "endereco": {
-        "id": 1,
-        "cep": "65000000",
-        "numero": 10,
-        "rua": "Rua E",
-        "bairro": "Village Jardins II",
-        "complemento": "Bloco C1, apto. 110",
-        "cidade": "São Luís",
-        "estado": "Maranhão"
+  
+     
+     {
+      "nome": "Eurico Fernandes",
+      "cpfCnpj": "12345678900",
+      "telefone": "98987654321",
+      "tipoPessoa": 0,
+      "email": "email58@email.com",
+      "endereco": {
+          "id": 1,
+          "cep": "65000000",
+          "numero": 10,
+          "rua": "Rua E",
+          "bairro": "Village Jardins II",
+          "complemento": "Bloco C1, apto. 110",
+          "cidade": "São Luís",
+          "estado": "Maranhão"
+      }
     }
-   }
+   
    
    No caso do POST não passamos o id do endereço, no PUT passamos o id do cliente na URI.
    
@@ -51,13 +53,14 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
    
    Exemplo de corpo da requisição para POST e PUT:
    
-   
+    
     {
       "descricao": "Laptop i5 8GB 500GB SSD",
       "codigoBarras": "101010101010",
       "valor": "4899.99",
       "quantidade": "50"
     }
+    
     
    no PUT passamos o id do produto na URI.
 
@@ -79,6 +82,7 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
       "valorFrete": 15.50
     }
     
+    
    no PUT passamos o id da transportadora na URI.
    
    obs.: tipoPessoa é uma enumeração que aceita 0 ou 1 (pessoa FÍSICA OU JURÍDICA)
@@ -86,7 +90,8 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
    Os recursos da venda cuidam do negócio mais sensível da aplicação, e tem três principais funcionalidades, sendo cada uma o passo anterior da outra, na ordem: Colocar itens no    carrinho, fazer checkout e finalizar a compra.
    
    ### Venda
-    - adiciona item ao carrinho: POST /cliente/id/venda/carrinho
+   - adiciona item ao carrinho: POST /cliente/id/venda/carrinho
+   
     
     {
        "itensCarrinho": [
@@ -101,10 +106,12 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
        ]
     }
     
-    - checkout: POST /cliente/id/venda/checkout/:id
+    
+   - checkout: POST /cliente/id/venda/checkout/:id
       - adiciona informação de frete, forma de pagamento (0, 1 ou 2, respectivamente BOLETO, DEBITO e CRÉDITO) e número de parcelas.
-
-     {
+    
+    ```
+      {
         "formaPagamento": 1,
         "numeroParcelas": 1,
         "transportadoraId": 1,
@@ -118,9 +125,10 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
                 "quantidade": 5
             }
         ]
-    }
+     }
+    ```
     
-    - finaliza venda: POST /cliente/id/venda/finalizar
-      - os mesmos dados do chekout, mas, neste caso, persiste os dados no banco e encerra a transação. Além disso subtrai a quantidade do produto no estoque.
+  - finaliza venda: POST /cliente/id/venda/finalizar
+     - os mesmos dados do chekout, mas, neste caso, persiste os dados no banco e encerra a transação. Além disso subtrai a quantidade do produto no estoque.
 
     obs.: os recursos da venda tem em sua URI o respectivo cliente que está realizando a compra.
