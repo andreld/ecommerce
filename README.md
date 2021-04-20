@@ -22,7 +22,7 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
     - busca: GET/cliente/:id
  
   Exemplo de corpo da requisição para POST e PUT:
-   ```
+   
    {
     "nome": "Eurico Fernandes",
     "cpfCnpj": "12345678900",
@@ -40,7 +40,7 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
         "estado": "Maranhão"
     }
    }
-   ```
+   
    No caso do POST não passamos o id do endereço, no PUT passamos o id do cliente na URI.
    
    ### EstoqueProduto
@@ -50,14 +50,15 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
     - busca: GET/estoque-produto/:id
    
    Exemplo de corpo da requisição para POST e PUT:
-    ```
+   
+   
     {
       "descricao": "Laptop i5 8GB 500GB SSD",
       "codigoBarras": "101010101010",
       "valor": "4899.99",
       "quantidade": "50"
     }
-    ```
+    
    no PUT passamos o id do produto na URI.
 
    ### Transportadora
@@ -67,7 +68,8 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
     - busca: GET/transportadora/:id
    
    Exemplo de corpo da requisição para POST e PUT:
-    ```
+   
+    
     {
       "nome": "FreteRapido",
       "cpfCnpj": "04285889000170",
@@ -76,9 +78,49 @@ Abaixo a URI de cada recurso, com seu respectivo método HTTP.
       "email": "atendimento@freterapido.com.br",
       "valorFrete": 15.50
     }
-    ```
+    
    no PUT passamos o id da transportadora na URI.
    
    obs.: tipoPessoa é uma enumeração que aceita 0 ou 1 (pessoa FÍSICA OU JURÍDICA)
     
-   Os recursos da venda cuidam do negócio mais sensível da aplicação, e tem três principais funcionalidades, sendo cada uma o passo anterior da outra, na ordem: Colocar itens no    carrinho, fazer checkout e finalziar a compra 
+   Os recursos da venda cuidam do negócio mais sensível da aplicação, e tem três principais funcionalidades, sendo cada uma o passo anterior da outra, na ordem: Colocar itens no    carrinho, fazer checkout e finalizar a compra.
+   
+   ### Venda
+    - adiciona item ao carrinho: POST /cliente/id/venda/carrinho
+    
+    {
+       "itensCarrinho": [
+          {
+              "estoqueProdutoId": 1,
+              "quantidade": 2
+          },
+          {
+              "estoqueProdutoId": 3,
+              "quantidade": 5
+          }
+       ]
+    }
+    
+    - checkout: POST /cliente/id/venda/checkout/:id
+      - adiciona informação de frete, forma de pagamento (0, 1 ou 2, respectivamente BOLETO, DEBITO e CRÉDITO) e número de parcelas.
+
+     {
+        "formaPagamento": 1,
+        "numeroParcelas": 1,
+        "transportadoraId": 1,
+        "itensCarrinho": [
+            {
+                "estoqueProdutoId": 1,
+                "quantidade": 2
+            },
+            {
+                "estoqueProdutoId": 3,
+                "quantidade": 5
+            }
+        ]
+    }
+    
+    - finaliza venda: POST /cliente/id/venda/finalizar
+      - os mesmos dados do chekout, mas, neste caso, persiste os dados no banco e encerra a transação. Além disso subtrai a quantidade do produto no estoque.
+
+    obs.: os recursos da venda tem em sua URI o respectivo cliente que está realizando a compra.
