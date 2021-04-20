@@ -11,7 +11,7 @@ services:
     
   app:
     container_name: ecommerce
-    image: andrepires/ecommerce:1.0
+    image: andrepires/ecommerce:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://docker-mysql:3306/ecommerce?createDatabaseIfNotExist=true&serverTimezone=UTC 
     ports:

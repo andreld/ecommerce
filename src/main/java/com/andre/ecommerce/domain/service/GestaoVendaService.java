@@ -120,4 +120,15 @@ public class GestaoVendaService {
 
 	}
 
+	public VendaDto calcularSubTotalETotal(Venda venda) {
+		for (ItemVenda item : venda.getItensCarrinho()) {
+
+			EstoqueProduto estoque = estoqueProdutoRepository.findById(item.getEstoqueProduto().getId())
+					.orElseThrow(() -> new NegocioException("Produto não existe"));
+			item.setEstoqueProduto(estoque);
+		}
+		venda.setValorTotalItens(calcularValorTotalItens(venda));
+		return toDto(venda);
+	}
+
 }

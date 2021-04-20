@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.andre.ecommerce.api.dto.VendaDto;
+import com.andre.ecommerce.api.input.CarrinhoInput;
 import com.andre.ecommerce.api.input.VendaInput;
 import com.andre.ecommerce.domain.model.EstoqueProduto;
 import com.andre.ecommerce.domain.model.ItemVenda;
@@ -41,6 +42,15 @@ public class VendaController {
 	@GetMapping("/historico")
 	public List<VendaDto> historico(@PathVariable Long clienteId) {
 		return gestaoVendaService.listar(clienteId);
+	}
+	
+	@PostMapping("/carrinho")
+	public CarrinhoDto carrinho(@PathVariable Long clienteId, @Valid @RequestBody CarrinhoInput carrinhoInput) {
+		cadastroClienteService.existePorId(clienteId);
+		VendaInput vendaInput = new VendaInput();
+		vendaInput.getItensCarrinho().addAll(carrinhoInput.getItensCarrinho());
+		VendaDto venda = gestaoVendaService.calcularSubTotalETotal(toEntity(vendaInput));
+		return modelMapper.map(venda, CarrinhoDto.class);
 	}
 	
 	@PostMapping("/checkout")
